@@ -1,8 +1,7 @@
 require 'net/http'
-
 require 'json'
 
-require_relative '../../../constants.rb'
+require_relative '../../../lib/constants.rb'
 require_relative 'exceptions.rb'
 
 module App

@@ -2,7 +2,7 @@ require 'socket'
 require 'rack'
 require 'net/http'
 
-require_relative '../../../constants.rb'
+require_relative '../../../lib/constants.rb'
 
 module App
   module Clients

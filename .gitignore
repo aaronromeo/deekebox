@@ -1,4 +1,4 @@
 .env.local
 .env
 data/token.json
-user_albums.json
+data/user_albums.json
