@@ -1,0 +1,1 @@
+class FetchException < StandardError; end
