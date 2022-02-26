@@ -6,7 +6,7 @@ DEBUG = ENV['DEBUG'] == 'true'
 APP_ID = ENV['APP_ID']
 APP_SECRET = ENV['APP_SECRET']
 PORT = ENV['PORT']
-REQUESTED_PERMISSIONS = 'basic_access,email,offline_access'
+REQUESTED_PERMISSIONS = 'basic_access,email,manage_library,offline_access'
 ACCESS_TOKEN_FILE = 'data/token.json'
 
 REDIRECT_URI = "http://localhost:#{PORT}/deekebox_oauth_redirect_uri"
