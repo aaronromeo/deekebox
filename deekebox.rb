@@ -4,6 +4,8 @@ require_relative 'app/clients/deezer/client'
 
 deezer_client = App::Clients::Deezer::Client.new
 
+puts "HEROKU_APP_NAME #{ENV['HEROKU_APP_NAME']}"
+
 if !deezer_client.authenticate?
   puts "not authenticated"
   deezer_client.connect
