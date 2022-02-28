@@ -6,8 +6,8 @@ module App
       class User < BaseEndpoint
         USER_URI = 'https://api.deezer.com/user/me'
 
-        def initialize(access_token)
-          super(access_token, USER_URI)
+        def initialize(access_token, outstream)
+          super(access_token, outstream, USER_URI)
         end
 
         def first
