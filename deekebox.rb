@@ -3,9 +3,9 @@ require 'sinatra'
 require_relative 'app/clients/deezer/client'
 require_relative 'lib/constants.rb'
 
-get '/oauth_redirect' do
-  deezer_client = App::Clients::Deezer::Client.new
+deezer_client = App::Clients::Deezer::Client.new
 
+get '/oauth_redirect' do
   if DEBUG
     puts request
   end
@@ -15,15 +15,8 @@ get '/oauth_redirect' do
   redirect "/"
 end
 
-get '/albums' do
-end
-
 get '/' do
-  deezer_client = App::Clients::Deezer::Client.new
-
-  if !deezer_client.authenticate?
-    redirect deezer_client.handshake_uri
-  end
+  redirect deezer_client.handshake_uri if !deezer_client.authenticate?
 
   stream do |outstream|
     deezer_client.outstream = outstream
