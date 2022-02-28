@@ -10,8 +10,9 @@ module App
       class BaseEndpoint
         ALBUMS_URI = 'https://api.deezer.com/user/me/albums'
 
-        def initialize(access_token, uri_str)
+        def initialize(access_token, out_stream, uri_str)
           @access_token = access_token
+          @out_stream = out_stream
           @uri_str = uri_str
         end
 
@@ -22,30 +23,30 @@ module App
           raise OAuthError if body['error']
 
           collection.concat(body['data'])
-          print message unless message.nil?
+          out_stream << message unless message.nil?
 
           while body['next'].present?
-            print "."
+            out_stream <<  "."
             body = fetch(URI(body['next']))
             collection.concat(body['data'])
           end
-          puts "."
+          out_stream << ". \n"
 
           collection
         end
 
         def first(message=nil)
-            print message unless message.nil?
+          out_stream << message unless message.nil?
 
-            body = fetch(starting_uri)
-            raise OAuthError if body['error']
+          body = fetch(starting_uri)
+          raise OAuthError if body['error']
 
-            body['data'] || body
+          body['data'] || body
         end
 
         private
 
-        attr_reader :access_token, :uri_str
+        attr_reader :access_token, :uri_str, :out_stream
 
         def fetch(uri)
           response = Net::HTTP.get_response(uri, headers)

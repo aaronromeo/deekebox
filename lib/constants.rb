@@ -9,7 +9,9 @@ PORT = ENV['PORT']
 REQUESTED_PERMISSIONS = 'basic_access,email,manage_library,offline_access'
 ACCESS_TOKEN_FILE = 'data/token.json'
 
-REDIRECT_URI = "http://localhost:#{PORT}/deekebox_oauth_redirect_uri"
+HOST_URI = ENV['HOST_URI'] || "http://localhost:#{PORT}"
+REDIRECT_PATH = "oauth_redirect"
+REDIRECT_URI = [HOST_URI, REDIRECT_PATH].join('/')
 
 if APP_ID.blank?
   raise Exception.new('Require env var `APP_ID` to be set')

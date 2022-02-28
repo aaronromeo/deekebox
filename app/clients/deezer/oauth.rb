@@ -8,46 +8,25 @@ module App
   module Clients
     module Deezer
       class OAuth
-        def connect
-          puts "Go to #{initial_uri_string}"
+        def handshake_uri
+          initial_uri_string
+        end
 
-          while session = server.accept
-            request = session.gets
-            if DEBUG
-              puts request
-            end
-
-            method, full_path = request.split(' ')
-            path, query = full_path.split('?')
-            app = app_factory
-            status, headers, body = app.call({
-              'REQUEST_METHOD' => method,
-              'PATH_INFO' => path,
-              'QUERY_STRING' => query
-            })
-
-            session.print "HTTP/1.1 #{status}\r\n"
-            headers.each do |key, value|
-              session.print "#{key}: #{value}\r\n"
-            end
-            session.print "\r\n"
-            body.each do |part|
-              session.print part
-            end
-
-            session.close
-
-            code = deezer_handshake_code(path, query)
-            if code.blank?
-              puts "Response cannot be parsed"
-              break
-            end
-
-            response = Net::HTTP.get(access_token_uri(code))
-            save_access_token(response)
-
-            break
+        def connect(request)
+          if DEBUG
+            puts request
+            puts request.path
+            puts request.query_string
           end
+
+          code = deezer_handshake_code(request.path, request.query_string)
+          if code.blank?
+            puts "Response cannot be parsed"
+            return
+          end
+
+          response = Net::HTTP.get(access_token_uri(code))
+          save_access_token(response)
         end
 
         private
@@ -56,10 +35,6 @@ module App
           Proc.new do
             ['200', {'Content-Type' => 'text/html'}, ["Deezer OAuth2 Handshake: You can close this window"]]
           end
-        end
-
-        def server
-          @server ||= TCPServer.new(PORT)
         end
 
         def initial_uri_string
@@ -71,7 +46,7 @@ module App
         end
 
         def deezer_handshake_code(path, query)
-          if path =~ /^\/deekebox_oauth_redirect_uri/
+          if path =~ Regexp.new("^\/#{REDIRECT_PATH}")
             captures = query.match(/^code=(.*)$/)
             return captures[1] if captures.present? and captures.length == 2
           end

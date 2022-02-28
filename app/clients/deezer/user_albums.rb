@@ -6,8 +6,8 @@ module App
       class UserAlbums < BaseEndpoint
         ALBUMS_URI = 'https://api.deezer.com/user/me/albums'
 
-        def initialize(access_token)
-          super(access_token, ALBUMS_URI)
+        def initialize(access_token, outstream)
+          super(access_token, outstream, ALBUMS_URI)
         end
 
         def all

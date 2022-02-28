@@ -7,18 +7,24 @@ module App
   module Clients
     module Deezer
       class Client
-        def connect
-          OAuth.new.connect
+        delegate :handshake_uri, :connect, to: :oauth_client
+
+        def oauth_client
+          OAuth.new
+        end
+
+        def outstream=(os)
+          @outstream = os
         end
 
         def authenticate?
-          User.new(access_token).first.dig('id') != ''
+          User.new(access_token, outstream).first.dig('id') != ''
         rescue AuthFileNotFound, FetchException, OAuthError
           false
         end
 
         def user_albums
-          UserAlbums.new(access_token).all
+          UserAlbums.new(access_token, outstream).all
         end
 
         def reset
@@ -28,6 +34,8 @@ module App
         end
 
         private
+
+        attr_reader :outstream
 
         def access_token
           raise AuthFileNotFound unless File.exists?(ACCESS_TOKEN_FILE)
